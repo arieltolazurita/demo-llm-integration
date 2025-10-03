@@ -8,9 +8,9 @@ import { OllamaClient } from '../sdk-clients.js';
 import { OllamaStrategy } from './ollama-strategy.js';
 
 const SUPPORTED_MODELS = Object.freeze([
-    'llama3',
-    'mistral',
-    'codellama'
+    'llama3.2',
+    'gemma3',
+    'qwen3'
 ]);
 
 export class OllamaFactory implements LLMFactory {
