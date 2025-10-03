@@ -10,6 +10,379 @@ This project demonstrates how to combine the Strategy, Abstract Factory, and Ada
 
 Together, these patterns provide flexibility (Strategy), organized creation (Factory), and compatibility (Adapter).
 
+## Architecture Diagrams
+
+### How the Patterns Work Together
+
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        App[Application Code]
+        Demo[demo.ts]
+    end
+    
+    subgraph "Service Layer (Facade)"
+        ChatService[ChatService]
+        Builder[LLMClientBuilder]
+    end
+    
+    subgraph "Registry (Service Locator)"
+        Registry[LLMRegistry]
+    end
+    
+    subgraph "Factory Layer (Abstract Factory)"
+        BF[BedrockFactory]
+        AF[AzureFactory]
+        GF[GoogleFactory]
+        OF[OllamaFactory]
+    end
+    
+    subgraph "Strategy Layer (Strategy + Adapter)"
+        BS[BedrockStrategy<br/>«Adapter»]
+        AS[AzureStrategy<br/>«Adapter»]
+        GS[GoogleStrategy<br/>«Adapter»]
+        OS[OllamaStrategy<br/>«Adapter»]
+    end
+    
+    subgraph "External SDKs"
+        BSDK[AWS Bedrock SDK]
+        ASDK[Azure OpenAI SDK]
+        GSDK[Google Vertex SDK]
+        OSDK[Ollama API]
+    end
+    
+    App --> ChatService
+    Demo --> Builder
+    Builder --> Registry
+    ChatService --> Registry
+    
+    Registry --> BF
+    Registry --> AF
+    Registry --> GF
+    Registry --> OF
+    
+    BF --> BS
+    AF --> AS
+    GF --> GS
+    OF --> OS
+    
+    BS --> BSDK
+    AS --> ASDK
+    GS --> GSDK
+    OS --> OSDK
+    
+    style ChatService fill:#e1f5e1
+    style Registry fill:#fff3cd
+    style BS fill:#d4e9ff
+    style AS fill:#d4e9ff
+    style GS fill:#d4e9ff
+    style OS fill:#d4e9ff
+```
+
+### Runtime Platform Switching Sequence
+
+```mermaid
+sequenceDiagram
+    participant App
+    participant ChatService
+    participant Registry
+    participant Factory
+    participant Strategy
+    participant SDK
+    
+    App->>ChatService: configure({platform: 'bedrock', model: 'claude'})
+    ChatService->>Registry: getFactory('bedrock')
+    Registry-->>ChatService: BedrockFactory
+    ChatService->>Factory: createClient('claude')
+    Factory->>Strategy: new BedrockStrategy(client, 'claude')
+    Factory-->>ChatService: strategy instance
+    
+    App->>ChatService: send('Hello')
+    ChatService->>Strategy: sendMessage('Hello')
+    Strategy->>SDK: invokeModel(request)
+    SDK-->>Strategy: response
+    Strategy-->>ChatService: ChatResponse (unified)
+    ChatService-->>App: ChatResponse
+    
+    Note over App,ChatService: User switches platform
+    
+    App->>ChatService: configure({platform: 'azure', model: 'gpt-4'})
+    ChatService->>Registry: getFactory('azure')
+    Registry-->>ChatService: AzureFactory
+    ChatService->>Factory: createClient('gpt-4')
+    Factory->>Strategy: new AzureStrategy(client, 'gpt-4')
+    Factory-->>ChatService: new strategy instance
+    
+    App->>ChatService: send('Hello again')
+    ChatService->>Strategy: sendMessage('Hello again')
+    Strategy->>SDK: chat.completions.create(request)
+    SDK-->>Strategy: response
+    Strategy-->>ChatService: ChatResponse (unified)
+    ChatService-->>App: ChatResponse
+```
+
+### Class Relationships (UML Style)
+
+```mermaid
+classDiagram
+    class LLMStrategy {
+        <<interface>>
+        +sendMessage(prompt, options) ChatResponse
+        +streamMessage(prompt, options) AsyncIterable
+    }
+    
+    class LLMFactory {
+        <<interface>>
+        +createClient(model) LLMStrategy
+        +listAvailableModels() string[]
+    }
+    
+    class ChatService {
+        -strategy: LLMStrategy
+        -config: ProviderConfig
+        +configure(config)
+        +send(prompt, options) ChatResponse
+        +stream(prompt, options) AsyncIterable
+        +getCurrentConfiguration() ProviderConfig
+    }
+    
+    class LLMRegistry {
+        -factories: Map
+        +register(platform, factory)
+        +getFactory(platform) LLMFactory
+        +listPlatforms() string[]
+    }
+    
+    class BedrockFactory {
+        +createClient(model) LLMStrategy
+        +listAvailableModels() string[]
+    }
+    
+    class BedrockStrategy {
+        -client: BedrockClient
+        -model: string
+        +sendMessage(prompt, options) ChatResponse
+        +streamMessage(prompt, options) AsyncIterable
+    }
+    
+    LLMStrategy <|.. BedrockStrategy : implements
+    LLMStrategy <|.. AzureStrategy : implements
+    LLMStrategy <|.. GoogleStrategy : implements
+    
+    LLMFactory <|.. BedrockFactory : implements
+    LLMFactory <|.. AzureFactory : implements
+    LLMFactory <|.. GoogleFactory : implements
+    
+    ChatService --> LLMStrategy : uses
+    ChatService --> LLMRegistry : queries
+    LLMRegistry --> LLMFactory : manages
+    BedrockFactory --> BedrockStrategy : creates
+    
+    BedrockStrategy --> BedrockClient : adapts
+```
+
+### Data Flow Through Patterns
+
+```mermaid
+graph LR
+    subgraph "Input"
+        Prompt[User Prompt]
+        Config[Platform Config]
+    end
+    
+    subgraph "Strategy Pattern"
+        Strategy{Which Strategy?}
+    end
+    
+    subgraph "Adapter Pattern"
+        Adapt1[Bedrock Adapter]
+        Adapt2[Azure Adapter]
+        Adapt3[Google Adapter]
+    end
+    
+    subgraph "External APIs"
+        API1[AWS API]
+        API2[Azure API]
+        API3[Google API]
+    end
+    
+    subgraph "Output"
+        Response[Unified Response]
+    end
+    
+    Config --> |Selects| Strategy
+    Prompt --> Strategy
+    
+    Strategy --> |bedrock| Adapt1
+    Strategy --> |azure| Adapt2
+    Strategy --> |google| Adapt3
+    
+    Adapt1 --> |Transform| API1
+    Adapt2 --> |Transform| API2
+    Adapt3 --> |Transform| API3
+    
+    API1 --> |Normalize| Response
+    API2 --> |Normalize| Response
+    API3 --> |Normalize| Response
+    
+    style Strategy fill:#fff3cd
+    style Adapt1 fill:#d4e9ff
+    style Adapt2 fill:#d4e9ff
+    style Adapt3 fill:#d4e9ff
+    style Response fill:#e1f5e1
+```
+
+### Component Dependencies
+
+```mermaid
+graph BT
+    subgraph "External Dependencies"
+        SDK1[AWS SDK]
+        SDK2[Azure SDK]
+        SDK3[Google SDK]
+        SDK4[Ollama API]
+    end
+    
+    subgraph "Platform Adapters"
+        BA[Bedrock Adapter]
+        AA[Azure Adapter]
+        GA[Google Adapter]
+        OA[Ollama Adapter]
+    end
+    
+    subgraph "Factories"
+        BF[Bedrock Factory]
+        AF[Azure Factory]
+        GF[Google Factory]
+        OF[Ollama Factory]
+    end
+    
+    subgraph "Core Contracts"
+        Strategy[LLMStrategy Interface]
+        Factory[LLMFactory Interface]
+        Types[Chat Types]
+    end
+    
+    subgraph "Service Layer"
+        Registry[LLM Registry]
+        Service[Chat Service]
+        Builder[Client Builder]
+    end
+    
+    subgraph "Application"
+        App[Your Application]
+    end
+    
+    SDK1 --> BA
+    SDK2 --> AA
+    SDK3 --> GA
+    SDK4 --> OA
+    
+    BA --> Strategy
+    AA --> Strategy
+    GA --> Strategy
+    OA --> Strategy
+    
+    BA --> BF
+    AA --> AF
+    GA --> GF
+    OA --> OF
+    
+    BF --> Factory
+    AF --> Factory
+    GF --> Factory
+    OF --> Factory
+    
+    Factory --> Registry
+    Strategy --> Service
+    Registry --> Service
+    Registry --> Builder
+    
+    Service --> App
+    Builder --> App
+    Types --> Strategy
+    Types --> Service
+    
+    style Strategy fill:#ffd700
+    style Factory fill:#ffd700
+    style Types fill:#ffd700
+    style Service fill:#90ee90
+    style App fill:#87ceeb
+```
+
+### Pattern Responsibilities
+
+```mermaid
+graph TD
+    subgraph "Strategy Pattern Responsibility"
+        SP[Define common interface<br/>Enable runtime switching<br/>Encapsulate algorithms]
+    end
+    
+    subgraph "Abstract Factory Responsibility"
+        AF[Create related objects<br/>Validate model support<br/>Hide instantiation logic]
+    end
+    
+    subgraph "Adapter Pattern Responsibility"
+        AP[Convert vendor APIs<br/>Normalize responses<br/>Handle SDK specifics]
+    end
+    
+    subgraph "Service/Facade Responsibility"
+        SF[Simplify client interface<br/>Manage configuration<br/>Coordinate patterns]
+    end
+    
+    subgraph "Registry Responsibility"
+        RP[Manage factory instances<br/>Enable platform discovery<br/>Centralize registration]
+    end
+    
+    SP --> |Provides| Interface[Uniform LLM Interface]
+    AF --> |Creates| Instances[Platform-Specific Instances]
+    AP --> |Translates| APIs[Vendor SDK Calls]
+    SF --> |Exposes| Simple[Simple API to Clients]
+    RP --> |Enables| Discovery[Runtime Platform Discovery]
+    
+    Interface --> Simple
+    Instances --> Simple
+    APIs --> Instances
+    Discovery --> Simple
+    
+    style SP fill:#e6f3ff
+    style AF fill:#ffe6f0
+    style AP fill:#fff0e6
+    style SF fill:#e6ffe6
+    style RP fill:#f0e6ff
+```
+
+### Adding a New Platform Flow
+
+```mermaid
+graph TD
+    Start([New Platform Needed])
+    
+    Start --> CreateDir[1. Create Platform Directory]
+    CreateDir --> CreateStrategy[2. Implement Strategy/Adapter]
+    CreateStrategy --> CreateFactory[3. Implement Factory]
+    CreateFactory --> MockSDK{Need Mock SDK?}
+    
+    MockSDK -->|Yes| CreateMock[4a. Create Mock Client]
+    MockSDK -->|No| UseReal[4b. Import Real SDK]
+    
+    CreateMock --> Register[5. Register Factory]
+    UseReal --> Register
+    
+    Register --> UpdateTypes[6. Update TypeScript Types]
+    UpdateTypes --> AddTests[7. Add Unit Tests]
+    AddTests --> UpdateDocs[8. Update Documentation]
+    UpdateDocs --> Verify[9. Run Build & Tests]
+    
+    Verify --> Success([Platform Ready])
+    
+    style Start fill:#e1f5e1
+    style Success fill:#e1f5e1
+    style CreateStrategy fill:#d4e9ff
+    style CreateFactory fill:#fff3cd
+    style Register fill:#ffe6e6
+```
+
 ## When to Use This Pattern
 
 ### Use This Approach When:
